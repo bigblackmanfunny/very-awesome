@@ -51,6 +51,10 @@
       font-weight: bold;
       color: green;
     }
+
+    .error {
+      color: red;
+    }
   </style>
 </head>
 <body>
@@ -63,30 +67,52 @@
   </div>
 
   <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbxwNyfg6JbAVyjJXG8QaHrh_wi8X6th-2BOGuRBUQd3orRGXtqsZjnN0j_Bj1li_fk1/exec";
-    
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxwNyfg6JbAVyjJXG8QaHrh_wi8X6th-2BOGuRBUQd3orRGXtqsZjnN0j_Bj1li_fk1/exec";
+
+    function login() {
+      // Clear previous messages
+      const message = document.getElementById('message');
+      message.textContent = '';
+
+      // Get username and password values
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
-      const message = document.getElementById('message');
 
+      // Check if both fields are filled
       if (!username || !password) {
-        alert("Both fields are required!");
+        message.textContent = "Both fields are required!";
+        message.classList.add('error');
         return;
       }
 
+      // Create FormData to send data to the Google Apps Script
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      // Send the form data via POST request to Google Apps Script
       fetch(scriptURL, {
         method: 'POST',
-        body: JSON.stringify({ username, password }),
-        headers: {
-          'Content-Type': 'application/json'
+        body: formData
+      })
+      .then(response => response.json())
+      .then(response => {
+        if (response.status === "success") {
+          message.textContent = "Login successful!";
+          message.classList.remove('error');
+          message.classList.add('success');
+        } else {
+          message.textContent = "Error logging in!";
+          message.classList.add('error');
         }
-      }).then(response => {
-        message.textContent = "Login successful!";
-      }).catch(error => {
+      })
+      .catch(error => {
         message.textContent = "Error logging in!";
+        message.classList.add('error');
         console.error('Error!', error.message);
       });
     }
   </script>
+
 </body>
 </html>
