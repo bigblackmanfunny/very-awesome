@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Login</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #f3f3f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+
+    .login-box {
+      background: #e0e0e0;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .login-box input {
+      display: block;
+      width: 100%;
+      margin: 15px 0;
+      padding: 12px;
+      border: none;
+      border-radius: 50px;
+      background: #ccc;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .login-box button {
+      padding: 12px 24px;
+      background: #888;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .message {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbxwNyfg6JbAVyjJXG8QaHrh_wi8X6th-2BOGuRBUQd3orRGXtqsZjnN0j_Bj1li_fk1/exec";
+    
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const message = document.getElementById('message');
+
+      if (!username || !password) {
+        alert("Both fields are required!");
+        return;
+      }
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({ username, password }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        message.textContent = "Login successful!";
+      }).catch(error => {
+        message.textContent = "Error logging in!";
+        console.error('Error!', error.message);
+      });
+    }
+  </script>
+</body>
+</html>
