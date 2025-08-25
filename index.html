@@ -5,24 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Admin Login</title>
   <style>
+    /* Background */
     body {
       margin: 0;
-      background-color: #f3f3f3;
+      background: #111;
+      background-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 1));
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       font-family: sans-serif;
+      color: #fff;
     }
 
+    /* Centered Box */
     .login-box {
-      background: #e0e0e0;
+      background: rgba(255, 255, 255, 0.1); /* Transparent white background for contrast */
       padding: 40px;
       border-radius: 16px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       text-align: center;
+      width: 300px; /* Set a fixed width for the box */
     }
 
+    /* Input Fields */
     .login-box input {
       display: block;
       width: 100%;
@@ -30,22 +36,35 @@
       padding: 12px;
       border: none;
       border-radius: 50px;
-      background: #ccc;
-      color: #333;
+      background: #333;
+      color: #fff;
       font-size: 16px;
     }
 
+    /* Placeholder Text */
+    .login-box input::placeholder {
+      color: #bbb;
+    }
+
+    /* Button Styling */
     .login-box button {
       padding: 12px 24px;
-      background: #888;
+      background: #777; /* Default button color */
       color: white;
       border: none;
       border-radius: 50px;
       font-size: 16px;
       cursor: pointer;
       width: 100%;
+      transition: background-color 0.3s ease;
     }
 
+    /* Bright Button when Valid */
+    .login-box button.valid {
+      background: #00cc66; /* Bright green */
+    }
+
+    /* Message Styling */
     .message {
       margin-top: 20px;
       font-weight: bold;
@@ -62,7 +81,7 @@
   <div class="login-box">
     <input type="text" id="username" placeholder="Username" required>
     <input type="password" id="password" placeholder="Password" required>
-    <button onclick="login()">Login</button>
+    <button id="login-btn" onclick="login()" disabled>Login</button>
     <div class="message" id="message"></div>
   </div>
 
@@ -74,13 +93,19 @@
       const message = document.getElementById('message');
       message.textContent = '';
 
-      // Get username and password values
+      // Get the username and password values
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
 
-      // Check if both fields are filled
-      if (!username || !password) {
-        message.textContent = "Both fields are required!";
+      // Check if both fields are filled and validate the password length
+      if (!username) {
+        message.textContent = "Username is required!";
+        message.classList.add('error');
+        return;
+      }
+
+      if (!password || password.length < 8) {
+        message.textContent = "Password must be at least 8 characters!";
         message.classList.add('error');
         return;
       }
@@ -90,7 +115,7 @@
       formData.append('username', username);
       formData.append('password', password);
 
-      // Send the form data via POST request to Google Apps Script
+      // Send data via POST request to the Google Apps Script
       fetch(scriptURL, {
         method: 'POST',
         body: formData
@@ -112,6 +137,29 @@
         console.error('Error!', error.message);
       });
     }
+
+    // Enable login button once requirements are met
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginButton = document.getElementById('login-btn');
+
+    function validateInputs() {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      // Enable button if username is entered and password has at least 8 characters
+      if (username && password.length >= 8) {
+        loginButton.disabled = false;
+        loginButton.classList.add('valid');
+      } else {
+        loginButton.disabled = true;
+        loginButton.classList.remove('valid');
+      }
+    }
+
+    // Listen for input changes
+    usernameInput.addEventListener('input', validateInputs);
+    passwordInput.addEventListener('input', validateInputs);
   </script>
 
 </body>
